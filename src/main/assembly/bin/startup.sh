@@ -9,7 +9,7 @@ LOGS_DIR=""
 if [ -n "$LOGS_FILE" ]; then
     LOGS_DIR=`dirname $LOGS_FILE`
 else
-    LOGS_DIR=$DEPLOY_DIR/logs
+    LOGS_DIR=$DEPLOY_DIR/log
 fi
 if [ ! -d $LOGS_DIR ]; then
     mkdir $LOGS_DIR

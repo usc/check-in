@@ -83,41 +83,6 @@
                 </configuration>
             </plugin>
 
-<!--             <plugin> -->
-<!--                 <groupId>org.apache.maven.plugins</groupId> -->
-<!--                 <artifactId>maven-jar-plugin</artifactId> -->
-<!--                 <configuration> -->
-<!--                     <excludes> -->
-<!--                         <exclude>**/*.properties</exclude> -->
-<!--                         <exclude>**/*.xml</exclude> -->
-<!--                     </excludes> -->
-<!--                 </configuration> -->
-<!--             </plugin> -->
-
-<!--             <plugin> -->
-<!--                 <artifactId>maven-dependency-plugin</artifactId> -->
-<!--                 <executions> -->
-<!--                     <execution> -->
-<!--                         <id>copy-dubbo-assembly</id> -->
-<!--                         <phase>package</phase> -->
-<!--                         <goals> -->
-<!--                             <goal>unpack</goal> -->
-<!--                         </goals> -->
-<!--                         <configuration> -->
-<!--                         <artifactItems> -->
-<!--                         <artifactItem> -->
-<!--                         <groupId>com.alibaba</groupId> -->
-<!--                         <artifactId>dubbo-container-api</artifactId> -->
-<!--                         <version>${dubbo.version}</version> -->
-<!--                         <outputDirectory>${project.build.directory}/dubbo</outputDirectory> -->
-<!--                         <includes>META-INF/assembly/**</includes> -->
-<!--                         </artifactItem> -->
-<!--                         </artifactItems> -->
-<!--                         </configuration> -->
-<!--                     </execution> -->
-<!--                 </executions> -->
-<!--             </plugin> -->
-
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
