@@ -2,15 +2,25 @@
     <v2ex>
         <accounts>
             <account>
-                <username>test1</username>
-                <password>dGVzdDc0MTk1MGUwZDNiMTRiMjlhOWFkMDRkMzBiZDJhYTJl</password>
-                <salt>741950e0d3b14b29a9ad04d30bd2aa2e</salt>
-            </account>
-            <account>
-                <username>test2</username>
-                <password>dGVzdDkxM2NiZTVjNzk5YTQ0Njc4YjBiMzczZTQxNmQzNGQ3</password>
-                <salt>913cbe5c799a44678b0b373e416d34d7</salt>
+                <username>username</username>
+                <password>password</password>
             </account>
         </accounts>
     </v2ex>
+    <zimuzu>
+        <accounts>
+            <account>
+                <username>username</username>
+                <password>password</password>
+            </account>
+        </accounts>
+    </zimuzu>
+    <smzdm>
+        <accounts>
+            <account>
+                <username>username</username>
+                <password>password</password>
+            </account>
+        </accounts>
+    </smzdm>
 </config>

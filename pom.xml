@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <spring.version>4.1.6.RELEASE</spring.version>
+        <spring.version>4.1.7.RELEASE</spring.version>
         <quartz.version>2.2.1</quartz.version>
     </properties>
 
@@ -24,24 +24,24 @@
             <version>1.1.3</version>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
-            <version>1.7.12</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.12</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-            <version>1.7.12</version>
-            <scope>runtime</scope>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>org.slf4j</groupId> -->
+<!--             <artifactId>log4j-over-slf4j</artifactId> -->
+<!--             <version>1.7.12</version> -->
+<!--             <scope>runtime</scope> -->
+<!--         </dependency> -->
+<!--         <dependency> -->
+<!--             <groupId>org.slf4j</groupId> -->
+<!--             <artifactId>jcl-over-slf4j</artifactId> -->
+<!--             <version>1.7.12</version> -->
+<!--             <scope>runtime</scope> -->
+<!--         </dependency> -->
+<!--         <dependency> -->
+<!--             <groupId>org.slf4j</groupId> -->
+<!--             <artifactId>jul-to-slf4j</artifactId> -->
+<!--             <version>1.7.12</version> -->
+<!--             <scope>runtime</scope> -->
+<!--         </dependency> -->
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -59,11 +59,11 @@
             <version>3.2.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>com.google.guava</groupId> -->
+<!--             <artifactId>guava</artifactId> -->
+<!--             <version>18.0</version> -->
+<!--         </dependency> -->
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -90,22 +90,15 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <!-- Transaction dependency is required with Quartz integration -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
+            <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
         </dependency>
 
-        <!-- Quartz framework -->
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <version>${quartz.version}</version>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>org.quartz-scheduler</groupId> -->
+<!--             <artifactId>quartz</artifactId> -->
+<!--             <version>${quartz.version}</version> -->
+<!--         </dependency> -->
     </dependencies>
 
     <build>

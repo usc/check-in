@@ -1,57 +1,60 @@
-package org.usc.check.in.job;
+package org.usc.check.in.task;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.usc.check.in.model.Account;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 /**
  *
  * @author Shunli
  */
-public class SmzdmAndroidCheckIn {
+public class SmzdmAndroidCheckInTask extends BaseTask {
+    private static final Logger log = LoggerFactory.getLogger(SmzdmAndroidCheckInTask.class);
+
     private static final String LOGIN_URL = "https://api.smzdm.com/v1/user/login";
     private static final String CHECK_IN_URL = "https://api.smzdm.com/v1/user/checkin";
 
     private static final String SSID = "D8abqe1FRAD2q037uVrvioeMW1Wbc4FV";
     private static final String USER_AGENT = "smzdm_android_V5.6.1 rv:240 (MI 4LTE;Android4.4.4;zh)";
 
-    public static void main(String[] args) {
-        List<Account> accounts = ImmutableList.of(
-                new Account("account", "password")
-                );
+    @Override
+    protected String name() {
+        return "smzdm";
+    }
 
-        for (Account account : accounts) {
+    @Scheduled(cron = "0 0 5,18 * * ?")
+    public void run() {
+        for (Account account : buildAccounts()) {
             try {
-                Executor executor = Executor.newInstance().cookieStore(new BasicCookieStore());
+                Executor executor = Executor.newInstance().use(new BasicCookieStore());
                 String token = login(executor, account);
                 if (StringUtils.isNotEmpty(token)) {
                     checkIn(executor, account, token);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("【" + account.getUsrename() + "】签到异常");
+                log.error("【SMZDM】【" + account.getUsername() + "】签到异常", e);
             }
-
         }
     }
 
-    private static String login(Executor executor, Account account) throws ClientProtocolException, IOException, URISyntaxException {
-        String usrename = account.getUsrename();
+    private String login(Executor executor, Account account) throws ClientProtocolException, IOException, URISyntaxException {
+        String usrename = account.getUsername();
 
         List<NameValuePair> formParams = buildFormParams("");
         formParams.add(new BasicNameValuePair("user_login", usrename));
@@ -61,31 +64,31 @@ public class SmzdmAndroidCheckIn {
 
         JSONObject loginJsonParseObject = JSON.parseObject(loginJson);
         if (0 != loginJsonParseObject.getInteger("error_code")) {
-            System.out.println("【" + usrename + "】登录失败：" + loginJsonParseObject.getString("error_msg"));
+            log.info("【SMZDM】【{}】登录失败：{}", usrename, loginJsonParseObject.getString("error_msg"));
             return StringUtils.EMPTY;
         }
 
-        System.out.println("【" + usrename + "】登录成功");
+        log.info("【SMZDM】【{}】登录成功", usrename);
         return loginJsonParseObject.getJSONObject("data").getString("token");
     }
 
-    private static boolean checkIn(Executor executor, Account account, String token) throws ClientProtocolException, IOException, URISyntaxException {
-        String usrename = account.getUsrename();
+    private boolean checkIn(Executor executor, Account account, String token) throws ClientProtocolException, IOException, URISyntaxException {
+        String usrename = account.getUsername();
 
         String checkInJson = executor.execute(Request.Post(CHECK_IN_URL).bodyForm(buildFormParams(token)).userAgent(USER_AGENT)).returnContent().asString();
 
         JSONObject checkInParseObject = JSON.parseObject(checkInJson);
         if (0 != checkInParseObject.getInteger("error_code")) {
-            System.out.println("【" + usrename + "】签到失败：" + checkInParseObject.getString("error_msg"));
+            log.info("【SMZDM】【{}】签到失败：{}", usrename, checkInParseObject.getString("error_msg"));
             return false;
         }
 
-        System.out.println("【" + usrename + "】签到成功");
+        log.info("【SMZDM】【{}】签到成功", usrename);
         return true;
     }
 
     private static List<NameValuePair> buildFormParams(String token) {
-        List<NameValuePair> formParams = Lists.newArrayList();
+        List<NameValuePair> formParams = new ArrayList<NameValuePair>();
         formParams.add(new BasicNameValuePair("captcha", ""));
         formParams.add(new BasicNameValuePair("f", "android"));
         formParams.add(new BasicNameValuePair("s", SSID));
@@ -96,26 +99,4 @@ public class SmzdmAndroidCheckIn {
         return formParams;
     }
 
-    static class Account {
-        private String usrename;
-        private String password;
-
-        public Account(String usrename, String password) {
-            this.usrename = usrename;
-            this.password = password;
-        }
-
-        public String getUsrename() {
-            return usrename;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        @Override
-        public String toString() {
-            return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-        }
-    }
 }
