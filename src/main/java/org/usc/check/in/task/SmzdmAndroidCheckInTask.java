@@ -42,7 +42,7 @@ public class SmzdmAndroidCheckInTask extends BaseTask {
     public void run() {
         for (Account account : buildAccounts()) {
             try {
-                Executor executor = Executor.newInstance().use(new BasicCookieStore());
+                Executor executor = Executor.newInstance().cookieStore(new BasicCookieStore());
                 String token = login(executor, account);
                 if (StringUtils.isNotEmpty(token)) {
                     checkIn(executor, account, token);
