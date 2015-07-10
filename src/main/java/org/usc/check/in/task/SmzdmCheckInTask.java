@@ -16,6 +16,7 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.usc.check.in.model.Account;
 
 import com.alibaba.fastjson.JSON;
@@ -25,6 +26,7 @@ import com.alibaba.fastjson.JSONObject;
  *
  * @author Shunli
  */
+@Component
 public class SmzdmCheckInTask extends BaseTask {
     private static final Logger log = LoggerFactory.getLogger(SmzdmCheckInTask.class);
 
