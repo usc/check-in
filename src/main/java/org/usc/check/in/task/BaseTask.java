@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.http.client.fluent.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.usc.check.in.model.Account;
 
@@ -30,5 +31,9 @@ public abstract class BaseTask {
         }
 
         return accounts;
+    }
+
+    protected Request appendTimeOuts(Request request) {
+        return request.connectTimeout(config.getInt("timeouts.connect", 60000)).socketTimeout(config.getInt("timeouts.socket", 60000));
     }
 }

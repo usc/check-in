@@ -69,7 +69,7 @@ public class SmzdmCheckInTask extends BaseTask {
 
         URI uri = new URIBuilder(LOGIN_URL).addParameters(nvps).build();
 
-        String loginJson = executor.execute(Request.Get(uri)).returnContent().asString();
+        String loginJson = executor.execute(appendTimeOuts(Request.Get(uri))).returnContent().asString();
         JSONObject loginJsonParseObject = JSON.parseObject(StringUtils.substringBetween(loginJson, "(", ")"));
         if (0 != loginJsonParseObject.getInteger("error_code")) {
             log.info("【SMZDM】【{}】登录失败：{}", usrename, loginJsonParseObject.getJSONObject("error_msg").getString("user_pass"));
@@ -87,7 +87,7 @@ public class SmzdmCheckInTask extends BaseTask {
                 addParameter("_", System.currentTimeMillis() + "").
                 build();
 
-        String signInJson = executor.execute(Request.Get(checkInURI)).returnContent().asString();
+        String signInJson = executor.execute(appendTimeOuts(Request.Get(checkInURI))).returnContent().asString();
         JSONObject signInParseObject = JSON.parseObject(StringUtils.substringBetween(signInJson, "(", ")"));
         if (0 != signInParseObject.getInteger("error_code")) {
             log.info("【SMZDM】【{}】签到失败：{}", usrename, signInParseObject.getJSONObject("error_msg").getString("public"));

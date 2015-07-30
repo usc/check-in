@@ -62,7 +62,7 @@ public class SmzdmAndroidCheckInTask extends BaseTask {
         formParams.add(new BasicNameValuePair("user_login", usrename));
         formParams.add(new BasicNameValuePair("user_pass", account.getPassword()));
 
-        String loginJson = executor.execute(Request.Post(LOGIN_URL).bodyForm(formParams).userAgent(USER_AGENT)).returnContent().asString();
+        String loginJson = executor.execute(appendTimeOuts(Request.Post(LOGIN_URL)).bodyForm(formParams).userAgent(USER_AGENT)).returnContent().asString();
 
         JSONObject loginJsonParseObject = JSON.parseObject(loginJson);
         if (0 != loginJsonParseObject.getInteger("error_code")) {
@@ -77,7 +77,7 @@ public class SmzdmAndroidCheckInTask extends BaseTask {
     private boolean checkIn(Executor executor, Account account, String token) throws ClientProtocolException, IOException, URISyntaxException {
         String usrename = account.getUsername();
 
-        String checkInJson = executor.execute(Request.Post(CHECK_IN_URL).bodyForm(buildFormParams(token)).userAgent(USER_AGENT)).returnContent().asString();
+        String checkInJson = executor.execute(appendTimeOuts(Request.Post(CHECK_IN_URL)).bodyForm(buildFormParams(token)).userAgent(USER_AGENT)).returnContent().asString();
 
         JSONObject checkInParseObject = JSON.parseObject(checkInJson);
         if (0 != checkInParseObject.getInteger("error_code")) {
@@ -88,7 +88,6 @@ public class SmzdmAndroidCheckInTask extends BaseTask {
         log.info("【SMZDM】【{}】签到成功", usrename);
         return true;
     }
-
     private static List<NameValuePair> buildFormParams(String token) {
         List<NameValuePair> formParams = new ArrayList<NameValuePair>();
         formParams.add(new BasicNameValuePair("captcha", ""));

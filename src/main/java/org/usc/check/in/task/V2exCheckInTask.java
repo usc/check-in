@@ -57,7 +57,7 @@ public class V2exCheckInTask extends BaseTask {
         String usrename = account.getUsername();
 
         // 1st get once
-        Document checkLoginOnce = Jsoup.parse(executor.execute(Request.Get(LOGIN_URL)).returnContent().asString());
+        Document checkLoginOnce = Jsoup.parse(executor.execute(appendTimeOuts(Request.Get(LOGIN_URL))).returnContent().asString());
         String once = checkLoginOnce.getElementsByAttributeValue("name", "once").attr("value");
 
         List<NameValuePair> formParams = new ArrayList<NameValuePair>();
@@ -67,10 +67,10 @@ public class V2exCheckInTask extends BaseTask {
         formParams.add(new BasicNameValuePair("next", "/"));
 
         // login
-        executor.execute(Request.Post(LOGIN_URL).bodyForm(formParams).userAgent(USER_AGENT).addHeader("Referer", "http://www/v2ex.com/signin"));
+        executor.execute(appendTimeOuts(Request.Post(LOGIN_URL)).bodyForm(formParams).userAgent(USER_AGENT).addHeader("Referer", "http://www/v2ex.com/signin"));
 
         // checkIn must load first page once
-        String rtn = executor.execute(Request.Get("http://www.v2ex.com")).returnContent().asString();
+        String rtn = executor.execute(appendTimeOuts(Request.Get("http://www.v2ex.com"))).returnContent().asString();
         if (StringUtils.contains(rtn, "signout")) {
             log.info("【V2EX】【{}】登录成功", usrename);
             return true;
@@ -83,7 +83,7 @@ public class V2exCheckInTask extends BaseTask {
     private boolean checkIn(Executor executor, Account account) throws ClientProtocolException, IOException, URISyntaxException, InterruptedException {
         String usrename = account.getUsername();
 
-        String rtn = executor.execute(Request.Get(CHECK_IN_URL)).returnContent().asString();
+        String rtn = executor.execute(appendTimeOuts(Request.Get(CHECK_IN_URL))).returnContent().asString();
         if (StringUtils.contains(rtn, "fa-ok-sign")) {
             log.info("【V2EX】【{}】每日登录奖励已领取，当前账户余额：{}", usrename, getBalance(rtn));
             return true;
@@ -94,7 +94,7 @@ public class V2exCheckInTask extends BaseTask {
         if (StringUtils.isNotEmpty(once)) {
             String url = "http://www.v2ex.com" + once;
 
-            String checkInRtn = executor.execute(Request.Get(url).userAgent(USER_AGENT).addHeader("Referer", CHECK_IN_URL)).returnContent().asString();
+            String checkInRtn = executor.execute(appendTimeOuts(Request.Get(url)).userAgent(USER_AGENT).addHeader("Referer", CHECK_IN_URL)).returnContent().asString();
             log.info("【V2EX】【{}】签到成功，当前账户余额：{}", usrename, getBalance(checkInRtn));
             return true;
         }

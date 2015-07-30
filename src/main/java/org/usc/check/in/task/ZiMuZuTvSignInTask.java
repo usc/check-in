@@ -61,7 +61,7 @@ public class ZiMuZuTvSignInTask extends BaseTask {
         formParams.add(new BasicNameValuePair("remember", "0"));
         formParams.add(new BasicNameValuePair("url_back", URL));
 
-        String loginJson = executor.execute(Request.Post(LOGIN_URL).bodyForm(formParams)).returnContent().asString();
+        String loginJson = executor.execute(appendTimeOuts(Request.Post(LOGIN_URL)).bodyForm(formParams)).returnContent().asString();
         JSONObject loginJsonParseObject = JSON.parseObject(loginJson);
         if (1 != loginJsonParseObject.getInteger("status")) {
             log.info("【ZIMUZU】【{}】登录失败：{}", usrename, loginJsonParseObject.getString("info"));
@@ -76,12 +76,12 @@ public class ZiMuZuTvSignInTask extends BaseTask {
         String usrename = account.getUsername();
 
         // first load signin page
-        executor.execute(Request.Get(SIGN_IN_PAGE_URL));
+        executor.execute(appendTimeOuts(Request.Get(SIGN_IN_PAGE_URL)));
 
         // sleep 15s+
         TimeUnit.SECONDS.sleep(20);
 
-        String signInJson = executor.execute(Request.Get(SIGN_IN_URL)).returnContent().asString();
+        String signInJson = executor.execute(appendTimeOuts(Request.Get(SIGN_IN_URL))).returnContent().asString();
         JSONObject signInParseObject = JSON.parseObject(signInJson);
         Integer stauts = signInParseObject.getInteger("status");
         if (stauts != null) {
