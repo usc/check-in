@@ -8,8 +8,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <spring.version>4.1.7.RELEASE</spring.version>
-        <quartz.version>2.2.1</quartz.version>
+        <spring.version>4.2.0.RELEASE</spring.version>
     </properties>
 
     <dependencies>
@@ -49,7 +48,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.8.2</version>
+            <version>1.8.3</version>
         </dependency>
 
         <dependency>
