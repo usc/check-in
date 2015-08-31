@@ -18,4 +18,4 @@ STDOUT_FILE=$LOGS_DIR/stdout.log
 
 LIB_JARS=$DEPLOY_DIR/lib/*
 
-nohup java -server -Xms512m -Xmx512m -classpath $CONF_DIR:$LIB_JARS org.usc.check.in.AppMain > $STDOUT_FILE 2>&1 &
+nohup java -server -Xms512m -Xmx512m -classpath $CONF_DIR:$LIB_JARS org.usc.check.in.AppMain >> $STDOUT_FILE 2>&1 &
