@@ -16,11 +16,11 @@ public class AppConfig {
     public XMLConfiguration config() {
         try {
             return buildConfig("myConfig.xml");
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationException e1) {
             try {
                 return buildConfig("config.xml");
-            } catch (Exception e2) {
-                throw new RuntimeException("can't find myConfig.xml(default) or config.xml in classpath", e);
+            } catch (ConfigurationException e2) {
+                throw new RuntimeException("can't find myConfig.xml(default) or config.xml in classpath");
             }
         }
     }
