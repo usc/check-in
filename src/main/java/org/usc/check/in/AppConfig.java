@@ -14,15 +14,21 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class AppConfig {
     @Bean
     public XMLConfiguration config() {
-        String fileName = "config.xml";
-
         try {
-            XMLConfiguration config = new XMLConfiguration(fileName);
-            config.setReloadingStrategy(new FileChangedReloadingStrategy());
-
-            return config;
+            return buildConfig("myConfig.xml");
         } catch (ConfigurationException e) {
-            throw new RuntimeException("Xml-Config-Failed-Load: " + fileName, e);
+            try {
+                return buildConfig("config.xml");
+            } catch (Exception e2) {
+                throw new RuntimeException("can't find myConfig.xml(default) or config.xml in classpath", e);
+            }
         }
+    }
+
+    private XMLConfiguration buildConfig(String fileName) throws ConfigurationException {
+        XMLConfiguration config = new XMLConfiguration(fileName);
+        config.setReloadingStrategy(new FileChangedReloadingStrategy());
+
+        return config;
     }
 }

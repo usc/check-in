@@ -72,10 +72,8 @@ public class MyPhotoCheckInTask extends BaseTask {
     }
 
     private boolean checkIn(Executor executor, Account account) throws ClientProtocolException, IOException, URISyntaxException {
-        String usrename = account.getUsername();
-
         String signInJson = executor.execute(appendTimeOuts(Request.Get(CHECK_IN_URL))).returnContent().asString();
-        log.info("【MyPhoto】【{}】签到结果：{}", usrename, JSON.parseObject(signInJson).getString("msg"));
+        log.info("【MyPhoto】【{}】签到结果：{}", account.getUsername(), JSON.parseObject(signInJson).getString("msg"));
         return true;
     }
 }
