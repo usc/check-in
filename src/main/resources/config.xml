@@ -1,4 +1,8 @@
 <config>
+    <timeouts>
+        <connect>60000</connect>
+        <socket>60000</socket>
+    </timeouts>
     <v2ex>
         <accounts>
             <account>
@@ -23,4 +27,12 @@
             </account>
         </accounts>
     </smzdm>
+    <myphoto>
+        <accounts>
+            <account>
+                <username>username</username>
+                <password>password</password>
+            </account>
+        </accounts>
+    </myphoto>
 </config>
