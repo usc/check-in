@@ -76,7 +76,7 @@ public class ZiMuZuTvSignInTask extends BaseTask {
         String usrename = account.getUsername();
 
         // first load signin page
-        executor.execute(appendTimeOuts(Request.Get(SIGN_IN_PAGE_URL)));
+        executor.execute(appendTimeOuts(Request.Get(SIGN_IN_PAGE_URL))).discardContent();
 
         // sleep 15s+
         TimeUnit.SECONDS.sleep(20);

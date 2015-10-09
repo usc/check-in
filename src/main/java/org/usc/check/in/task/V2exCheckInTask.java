@@ -67,7 +67,7 @@ public class V2exCheckInTask extends BaseTask {
         formParams.add(new BasicNameValuePair("next", "/"));
 
         // login
-        executor.execute(appendTimeOuts(Request.Post(LOGIN_URL)).bodyForm(formParams).userAgent(USER_AGENT).addHeader("Referer", "http://www/v2ex.com/signin"));
+        executor.execute(appendTimeOuts(Request.Post(LOGIN_URL)).bodyForm(formParams).userAgent(USER_AGENT).addHeader("Referer", "http://www/v2ex.com/signin")).discardContent();
 
         // checkIn must load first page once
         String rtn = executor.execute(appendTimeOuts(Request.Get("http://www.v2ex.com"))).returnContent().asString();
