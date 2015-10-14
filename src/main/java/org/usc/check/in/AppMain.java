@@ -13,6 +13,7 @@ public class AppMain {
         // context.getBean(V2exCheckInTask.class).run();
         // context.getBean(ZiMuZuTvSignInTask.class).run();
         // context.getBean(MyPhotoCheckInTask.class).run();
+        // context.getBean(MoliWebCheckInTask.class).run();
         //
         // System.out.println("end");
     }
