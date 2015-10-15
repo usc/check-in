@@ -26,15 +26,15 @@ import com.alibaba.fastjson.JSONObject;
  * @author Shunli
  */
 @Component
-public class MoliWebCheckInTask extends BaseTask {
-    private static final Logger log = LoggerFactory.getLogger(MoliWebCheckInTask.class);
+public class LitsCloudCheckInTask extends BaseTask {
+    private static final Logger log = LoggerFactory.getLogger(LitsCloudCheckInTask.class);
 
-    private static final String LOGIN_URL = "https://free.moliwebss.com/user/_login.php";
-    private static final String CHECK_IN_URL = "https://free.moliwebss.com/user/_checkin.php";
+    private static final String LOGIN_URL = "http://snsvpn.litscloud.com/user/_login.php";
+    private static final String CHECK_IN_URL = "http://snsvpn.litscloud.com/user/_checkin.php";
 
     @Override
     protected String name() {
-        return "moliweb";
+        return "litscloud";
     }
 
     @Scheduled(cron = "0 0 * * * ?")
@@ -46,7 +46,7 @@ public class MoliWebCheckInTask extends BaseTask {
                     checkIn(executor, account);
                 }
             } catch (Exception e) {
-                log.error("【MoliWeb】【" + account.getUsername() + "】签到异常", e);
+                log.error("【LitsCloud】【" + account.getUsername() + "】签到异常", e);
             }
 
         }
@@ -63,17 +63,17 @@ public class MoliWebCheckInTask extends BaseTask {
         String loginJson = executor.execute(appendTimeOuts(Request.Post(LOGIN_URL)).bodyForm(formParams)).returnContent().asString();
         JSONObject loginJsonParseObject = JSON.parseObject(loginJson);
         if (!StringUtils.equals("1", loginJsonParseObject.getString("code"))) {
-            log.info("【MoliWeb】【{}】登录失败：{}", usrename, loginJsonParseObject.getString("msg"));
+            log.info("【LitsCloud】【{}】登录失败：{}", usrename, loginJsonParseObject.getString("msg"));
             return false;
         }
 
-        log.info("【MoliWeb】【{}】登录成功", usrename);
+        log.info("【LitsCloud】【{}】登录成功", usrename);
         return true;
     }
 
     private boolean checkIn(Executor executor, Account account) throws ClientProtocolException, IOException, URISyntaxException {
         String signInJson = executor.execute(appendTimeOuts(Request.Get(CHECK_IN_URL))).returnContent().asString();
-        log.info("【MoliWeb】【{}】签到结果：{}", account.getUsername(), JSON.parseObject(signInJson).getString("msg"));
+        log.info("【LitsCloud】【{}】签到结果：{}", account.getUsername(), JSON.parseObject(signInJson).getString("msg"));
         return true;
     }
 }

@@ -35,4 +35,20 @@
             </account>
         </accounts>
     </myphoto>
+    <litscloud>
+        <accounts>
+            <account>
+                <username>username</username>
+                <password>password</password>
+            </account>
+        </accounts>
+    </litscloud>
+    <moliweb>
+        <accounts>
+            <account>
+                <username>username</username>
+                <password>password</password>
+            </account>
+        </accounts>
+    </moliweb>
 </config>
