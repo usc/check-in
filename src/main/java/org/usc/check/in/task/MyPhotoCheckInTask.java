@@ -37,7 +37,7 @@ public class MyPhotoCheckInTask extends BaseTask {
         return "myphoto";
     }
 
-    @Scheduled(cron = "0 0 0/2 * * ?")
+    @Scheduled(cron = "0 0 * * * ?")
     public void run() {
         for (Account account : buildAccounts()) {
             try {
