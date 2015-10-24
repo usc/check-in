@@ -14,6 +14,7 @@ public class AppMain {
         // context.getBean(ZiMuZuTvSignInTask.class).run();
         // context.getBean(MyPhotoCheckInTask.class).run();
         // context.getBean(MoliWebCheckInTask.class).run();
+        // context.getBean(MiaoCheckInTask.class).run();
         //
         // System.out.println("end");
     }
