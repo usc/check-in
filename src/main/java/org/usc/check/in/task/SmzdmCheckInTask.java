@@ -6,13 +6,15 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +32,8 @@ import com.alibaba.fastjson.JSONObject;
 public class SmzdmCheckInTask extends BaseTask {
     private static final Logger log = LoggerFactory.getLogger(SmzdmCheckInTask.class);
 
-    private static final String LOGIN_URL = "http://www.smzdm.com/user/login/jsonp_check";
-    private static final String CHECK_IN_URL = "http://www.smzdm.com/user/qiandao/jsonp_checkin";
+    private static final String LOGIN_URL = "https://zhiyou.smzdm.com/user/login/ajax_check";
+    private static final String CHECK_IN_URL = "http://zhiyou.smzdm.com/user/checkin/jsonp_checkin";
 
     @Override
     protected String name() {
@@ -42,7 +44,8 @@ public class SmzdmCheckInTask extends BaseTask {
     public void run() {
         for (Account account : buildAccounts()) {
             try {
-                Executor executor = Executor.newInstance().cookieStore(new BasicCookieStore());
+                CloseableHttpClient client = HttpClients.custom().setHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER).build();
+                Executor executor = Executor.newInstance(client).cookieStore(new BasicCookieStore());
                 if (login(executor, account)) {
                     checkIn(executor, account);
                 }
@@ -55,24 +58,18 @@ public class SmzdmCheckInTask extends BaseTask {
 
     private boolean login(Executor executor, Account account) throws ClientProtocolException, IOException, URISyntaxException {
         String usrename = account.getUsername();
-        String timestamp = System.currentTimeMillis() + "";
 
-        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-        // nvps.add(new BasicNameValuePair("callback", "jQuery_" + timestamp));
-        nvps.add(new BasicNameValuePair("user_login", usrename));
-        nvps.add(new BasicNameValuePair("user_pass", account.getPassword()));
-        nvps.add(new BasicNameValuePair("rememberme", "0"));
-        nvps.add(new BasicNameValuePair("is_third", ""));
-        nvps.add(new BasicNameValuePair("is_pop", "1"));
-        nvps.add(new BasicNameValuePair("captcha", ""));
-        nvps.add(new BasicNameValuePair("_", timestamp));
+        List<NameValuePair> formParams = new ArrayList<NameValuePair>();
+        formParams.add(new BasicNameValuePair("username", usrename));
+        formParams.add(new BasicNameValuePair("password", account.getPassword()));
+        formParams.add(new BasicNameValuePair("rememberme", "on"));
+        formParams.add(new BasicNameValuePair("captcha", ""));
+        formParams.add(new BasicNameValuePair("redirect_url", "http://www.smzdm.com"));
 
-        URI uri = new URIBuilder(LOGIN_URL).addParameters(nvps).build();
-
-        String loginJson = executor.execute(appendTimeOuts(Request.Get(uri))).returnContent().asString();
-        JSONObject loginJsonParseObject = JSON.parseObject(StringUtils.substringBetween(loginJson, "(", ")"));
+        String loginJson = executor.execute(appendTimeOuts(Request.Post(LOGIN_URL)).bodyForm(formParams)).returnContent().asString();
+        JSONObject loginJsonParseObject = JSON.parseObject(loginJson);
         if (0 != loginJsonParseObject.getInteger("error_code")) {
-            log.info("【SMZDM】【{}】登录失败：{}", usrename, loginJsonParseObject.getJSONObject("error_msg").getString("user_pass"));
+            log.info("【SMZDM】【{}】登录失败：{}", usrename, loginJsonParseObject.getString("error_msg"));
             return false;
         }
 
@@ -88,9 +85,9 @@ public class SmzdmCheckInTask extends BaseTask {
                 build();
 
         String signInJson = executor.execute(appendTimeOuts(Request.Get(checkInURI))).returnContent().asString();
-        JSONObject signInParseObject = JSON.parseObject(StringUtils.substringBetween(signInJson, "(", ")"));
+        JSONObject signInParseObject = JSON.parseObject(signInJson);
         if (0 != signInParseObject.getInteger("error_code")) {
-            log.info("【SMZDM】【{}】签到失败：{}", usrename, signInParseObject.getJSONObject("error_msg").getString("public"));
+            log.info("【SMZDM】【{}】签到失败：{}", usrename, signInParseObject.getString("error_msg"));
             return false;
         }
 
