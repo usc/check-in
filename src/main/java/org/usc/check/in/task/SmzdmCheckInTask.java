@@ -11,7 +11,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -44,8 +44,8 @@ public class SmzdmCheckInTask extends BaseTask {
     public void run() {
         for (Account account : buildAccounts()) {
             try {
-                CloseableHttpClient client = HttpClients.custom().setHostnameVerifier(SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER).build();
-                Executor executor = Executor.newInstance(client).cookieStore(new BasicCookieStore());
+                CloseableHttpClient client = HttpClients.custom().setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE).build();
+                Executor executor = Executor.newInstance(client).use(new BasicCookieStore());
                 if (login(executor, account)) {
                     checkIn(executor, account);
                 }

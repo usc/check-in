@@ -42,7 +42,7 @@ public class ZiMuZuTvSignInTask extends BaseTask {
     public void run() {
         for (Account account : buildAccounts()) {
             try {
-                Executor executor = Executor.newInstance().cookieStore(new BasicCookieStore());
+                Executor executor = Executor.newInstance().use(new BasicCookieStore());
                 if (login(executor, account)) {
                     signIn(executor, account);
                 }

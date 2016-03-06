@@ -8,9 +8,13 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -42,7 +46,9 @@ public class V2exCheckInTask extends BaseTask {
     public void run() {
         for (Account account : buildAccounts()) {
             try {
-                Executor executor = Executor.newInstance().cookieStore(new BasicCookieStore());
+                RequestConfig config = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD_STRICT).build();
+                CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(config).build();
+                Executor executor = Executor.newInstance(client).use(new BasicCookieStore());
                 if (login(executor, account)) {
                     checkIn(executor, account);
                 }
