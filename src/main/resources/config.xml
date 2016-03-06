@@ -3,11 +3,14 @@
         <connect>60000</connect>
         <socket>60000</socket>
     </timeouts>
+
+    <!-- encryptPassword = DesUtil.encrypt(password, parentName + username) -->
+    <!-- like "/aCJhMjkO9D+K6RxgLGzpA==" = DesUtil.encrypt("password", "smzdm" + "username") -->
     <smzdm>
         <accounts>
             <account>
                 <username>username</username>
-                <password>password</password>
+                <password>/aCJhMjkO9D+K6RxgLGzpA==</password>
             </account>
         </accounts>
     </smzdm>
@@ -15,7 +18,7 @@
         <accounts>
             <account>
                 <username>username</username>
-                <password>password</password>
+                <password>M1vIt3XoTYyZ8dUEN6pmJQ==</password>
             </account>
         </accounts>
     </v2ex>
@@ -23,7 +26,7 @@
         <accounts>
             <account>
                 <username>username</username>
-                <password>password</password>
+                <password>NUS+ly+jPW7bBMJvBHifMQ==</password>
             </account>
         </accounts>
     </zimuzu>
