@@ -33,8 +33,8 @@ import com.alibaba.fastjson.JSONObject;
  * @author Shunli
  */
 @Component
-public class SmzdmAndroidCheckInTask extends BaseTask {
-    private static final Logger log = LoggerFactory.getLogger(SmzdmAndroidCheckInTask.class);
+public class SmzdmAndroidTask extends BaseTask {
+    private static final Logger log = LoggerFactory.getLogger(SmzdmAndroidTask.class);
 
     private static final String LOGIN_URL = "https://api.smzdm.com/v1/user/login";
     private static final String CHECK_IN_URL = "https://api.smzdm.com/v1/user/checkin";
