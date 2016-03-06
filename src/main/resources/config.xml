@@ -3,6 +3,14 @@
         <connect>60000</connect>
         <socket>60000</socket>
     </timeouts>
+    <smzdm>
+        <accounts>
+            <account>
+                <username>username</username>
+                <password>password</password>
+            </account>
+        </accounts>
+    </smzdm>
     <v2ex>
         <accounts>
             <account>
@@ -19,36 +27,4 @@
             </account>
         </accounts>
     </zimuzu>
-    <smzdm>
-        <accounts>
-            <account>
-                <username>username</username>
-                <password>password</password>
-            </account>
-        </accounts>
-    </smzdm>
-    <myphoto>
-        <accounts>
-            <account>
-                <username>username</username>
-                <password>password</password>
-            </account>
-        </accounts>
-    </myphoto>
-    <litscloud>
-        <accounts>
-            <account>
-                <username>username</username>
-                <password>password</password>
-            </account>
-        </accounts>
-    </litscloud>
-    <moliweb>
-        <accounts>
-            <account>
-                <username>username</username>
-                <password>password</password>
-            </account>
-        </accounts>
-    </moliweb>
 </config>
