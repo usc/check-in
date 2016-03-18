@@ -3,8 +3,8 @@ package org.usc.check.in.task;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Executor;
@@ -30,8 +30,7 @@ public class ZiMuZuTvSignInTask extends BaseTask {
 
     private static final String URL = "http://www.zimuzu.tv/";
     private static final String LOGIN_URL = "http://www.zimuzu.tv/User/Login/ajaxLogin";
-    private static final String SIGN_IN_PAGE_URL = "http://www.zimuzu.tv/user/sign";
-    private static final String SIGN_IN_URL = "http://www.zimuzu.tv/user/sign/dosign";
+    private static final String SIGN_IN_URL = "http://www.zimuzu.tv/user/sign";
 
     @Override
     protected String name() {
@@ -75,28 +74,15 @@ public class ZiMuZuTvSignInTask extends BaseTask {
     private boolean signIn(Executor executor, Account account) throws ClientProtocolException, IOException, InterruptedException {
         String usrename = account.getUsername();
 
-        // first load signin page
-        executor.execute(appendTimeOuts(Request.Get(SIGN_IN_PAGE_URL))).discardContent();
+        executor.execute(appendTimeOuts(Request.Get(URL))).discardContent();
 
-        // sleep 15s+
-        TimeUnit.SECONDS.sleep(20);
-
-        String signInJson = executor.execute(appendTimeOuts(Request.Get(SIGN_IN_URL))).returnContent().asString();
-        JSONObject signInParseObject = JSON.parseObject(signInJson);
-        Integer stauts = signInParseObject.getInteger("status");
-        if (stauts != null) {
-            if (0 == stauts) {
-                log.info("【ZIMUZU】【{}】已经签到", usrename);
-                return true;
-            }
-
-            if (1 == stauts) {
-                log.info("【ZIMUZU】【{}】签到成功", usrename);
-                return true;
-            }
+        String rtn = executor.execute(appendTimeOuts(Request.Get(SIGN_IN_URL))).returnContent().asString();
+        if (StringUtils.contains(rtn, "您今天已登录")) {
+            log.info("【ZIMUZU】【{}】签到成功", usrename);
+            return true;
         }
 
-        log.info("【ZIMUZU】【{}】签到失败：{}", usrename, signInParseObject.getString("info"));
+        log.info("【ZIMUZU】【{}】签到失败", usrename);
         return false;
     }
 
