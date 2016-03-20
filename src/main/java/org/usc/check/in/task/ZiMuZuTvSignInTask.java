@@ -75,6 +75,8 @@ public class ZiMuZuTvSignInTask extends BaseTask {
         String usrename = account.getUsername();
 
         executor.execute(appendTimeOuts(Request.Get(URL))).discardContent();
+        executor.execute(appendTimeOuts(Request.Get("http://www.zimuzu.tv/public/hotkeyword"))).discardContent();
+        executor.execute(appendTimeOuts(Request.Get("http://www.zimuzu.tv/user/login/getCurUserTopInfo"))).discardContent();
 
         String rtn = executor.execute(appendTimeOuts(Request.Get(SIGN_IN_URL))).returnContent().asString();
         if (StringUtils.contains(rtn, "您今天已登录")) {
