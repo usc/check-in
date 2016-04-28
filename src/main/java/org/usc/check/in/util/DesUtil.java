@@ -16,6 +16,7 @@ import sun.misc.BASE64Encoder;
  *
  * @author freelife
  */
+@SuppressWarnings("restriction")
 public class DesUtil {
     private final static String DES = "DES";
 

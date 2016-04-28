@@ -65,10 +65,11 @@ public class V2exCheckInTask extends BaseTask {
         // 1st get once
         Document checkLoginOnce = Jsoup.parse(executor.execute(appendTimeOuts(Request.Get(LOGIN_URL))).returnContent().asString());
         String once = checkLoginOnce.getElementsByAttributeValue("name", "once").attr("value");
+        Elements elementsByClass = checkLoginOnce.getElementsByClass("sl");
 
         List<NameValuePair> formParams = new ArrayList<NameValuePair>();
-        formParams.add(new BasicNameValuePair("u", usrename));
-        formParams.add(new BasicNameValuePair("p", account.getPassword()));
+        formParams.add(new BasicNameValuePair(elementsByClass.get(0).attr("name"), usrename));
+        formParams.add(new BasicNameValuePair(elementsByClass.get(1).attr("name"), account.getPassword()));
         formParams.add(new BasicNameValuePair("once", once));
         formParams.add(new BasicNameValuePair("next", "/"));
 
