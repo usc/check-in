@@ -52,6 +52,10 @@ public class ZiMuZuTvSignInTask extends BaseTask {
     }
 
     private boolean login(Executor executor, Account account) throws ClientProtocolException, IOException {
+        // 1st load first page, 313932302c31303830 = stringToHex("1920,1080")
+        executor.execute(appendTimeOuts(Request.Get(URL))).discardContent();
+        executor.execute(appendTimeOuts(Request.Get(URL + "?security_verify_data=313932302c31303830"))).discardContent();
+
         String usrename = account.getUsername();
 
         List<NameValuePair> formParams = new ArrayList<NameValuePair>();
