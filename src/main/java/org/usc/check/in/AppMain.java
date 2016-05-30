@@ -1,20 +1,15 @@
 package org.usc.check.in;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@SpringBootApplication
+@EnableScheduling
 public class AppMain {
 
-    @SuppressWarnings("resource")
     public static void main(String[] args) throws Exception {
-        new AnnotationConfigApplicationContext(AppConfig.class);
-
-        // AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-        // context.getBean(SmzdmAndroidTask.class).run();
-        // context.getBean(V2exCheckInTask.class).run();
-        // context.getBean(ZiMuZuTvSignInTask.class).run();
-        // context.getBean(SmzdmCheckInTask.class).run();
-        //
-        // System.out.println("end");
-
+        SpringApplication.run(AppMain.class, args);
     }
+
 }
