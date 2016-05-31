@@ -2,21 +2,18 @@ package org.usc.check.in.util;
 
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
 /**
  * from http://www.oschina.net/code/snippet_727646_18383
  *
  * @author freelife
  */
-@SuppressWarnings("restriction")
 public class DesUtil {
     private final static String DES = "DES";
 
@@ -31,8 +28,8 @@ public class DesUtil {
      */
     public static String encrypt(String data, String key) throws Exception {
         byte[] bt = encrypt(data.getBytes(), key.getBytes());
-        String strs = new BASE64Encoder().encode(bt);
-        return strs;
+        byte[] buf = Base64.getEncoder().encode(bt);
+        return new String(buf);
     }
 
     /**
@@ -49,8 +46,7 @@ public class DesUtil {
             Exception {
         if (data == null)
             return null;
-        BASE64Decoder decoder = new BASE64Decoder();
-        byte[] buf = decoder.decodeBuffer(data);
+        byte[] buf = Base64.getDecoder().decode(data);
         byte[] bt = decrypt(buf, key.getBytes());
         return new String(bt);
     }
