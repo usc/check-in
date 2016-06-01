@@ -37,7 +37,7 @@ STDOUT_FILE=$LOGS_DIR/stdout.log
 
 LIB_JARS=$DEPLOY_DIR/lib/*
 
-JAVA_OPTS=" -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true Dfile.encoding=UTF-8 "
+JAVA_OPTS=" -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true -Dfile.encoding=UTF-8 "
 JAVA_DEBUG_OPTS=""
 if [ "$1" = "debug" ]; then
     JAVA_DEBUG_OPTS=" -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=18080,server=y,suspend=n "
@@ -48,7 +48,7 @@ if [ "$1" = "jmx" ]; then
 fi
 
 echo -e "Starting the $SERVER_NAME ...\c"
-nohup java $JAVA_OPTS -server $JAVA_DEBUG_OPTS $JAVA_JMX_OPTS -classpath $CONF_DIR:$LIB_JARS org.usc.check.in.AppMain >> $STDOUT_FILE 2>&1 &
+nohup java $JAVA_OPTS $JAVA_DEBUG_OPTS $JAVA_JMX_OPTS -classpath $CONF_DIR:$LIB_JARS org.usc.check.in.AppMain >> $STDOUT_FILE 2>&1 &
 
 COUNT=0
 while [ $COUNT -lt 1 ]; do

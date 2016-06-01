@@ -39,4 +39,13 @@ public class Controller {
         return "success";
     }
 
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    public String all() {
+        smzdmAndroidTask.run();
+        v2exCheckInTask.run();
+        ziMuZuTvSignInTask.run();
+
+        return "success";
+    }
+
 }
