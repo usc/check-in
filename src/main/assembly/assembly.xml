@@ -18,10 +18,6 @@
         <fileSet>
             <directory>${project.basedir}/src/main/resources</directory>
             <outputDirectory>/conf</outputDirectory>
-            <includes>
-                <include>application.properties</include>
-                <include>*.xml</include>
-            </includes>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/main/assembly/bin</directory>

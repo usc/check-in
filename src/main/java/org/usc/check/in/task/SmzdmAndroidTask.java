@@ -20,6 +20,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.usc.check.in.model.Account;
@@ -33,6 +34,7 @@ import com.alibaba.fastjson.JSONObject;
  * @author Shunli
  */
 @Component
+@ConfigurationProperties(prefix = "smzdm")
 public class SmzdmAndroidTask extends BaseTask {
     private static final Logger log = LoggerFactory.getLogger(SmzdmAndroidTask.class);
 
@@ -45,14 +47,9 @@ public class SmzdmAndroidTask extends BaseTask {
     private static final String SSID = "D8abqe1FRAD2q037uVrvioeMW1Wbc4FV";
     private static final String USER_AGENT = "smzdm_android_V6.2 rv:310 (MI 4LTE;Android6.0.1;zh)";
 
-    @Override
-    protected String name() {
-        return "smzdm";
-    }
-
     @Scheduled(cron = "0 0 5,18 * * ?")
     public void run() {
-        for (Account account : buildAccounts()) {
+        for (Account account : getAccounts()) {
             try {
                 CloseableHttpClient client = HttpClients.custom().setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE).build();
                 Executor executor = Executor.newInstance(client).use(new BasicCookieStore());

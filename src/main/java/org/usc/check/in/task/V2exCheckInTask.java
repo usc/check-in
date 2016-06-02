@@ -21,6 +21,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.usc.check.in.model.Account;
@@ -30,6 +31,7 @@ import org.usc.check.in.model.Account;
  * @author Shunli
  */
 @Component
+@ConfigurationProperties(prefix = "v2ex")
 public class V2exCheckInTask extends BaseTask {
     private static final Logger log = LoggerFactory.getLogger(V2exCheckInTask.class);
 
@@ -37,14 +39,9 @@ public class V2exCheckInTask extends BaseTask {
     private static final String CHECK_IN_URL = "http://www.v2ex.com/mission/daily";
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36";
 
-    @Override
-    protected String name() {
-        return "v2ex";
-    }
-
     @Scheduled(cron = "0 0 9,18 * * ?")
     public void run() {
-        for (Account account : buildAccounts()) {
+        for (Account account : getAccounts()) {
             try {
                 RequestConfig config = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD_STRICT).build();
                 CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(config).build();

@@ -1,0 +1,25 @@
+
+timeouts:
+    connect: 60000
+    socket: 60000
+
+smzdm:
+    accounts:
+        -
+            username: account1
+            password: password1
+        -
+            username: account2
+            password: password2
+
+v2ex:
+    accounts:
+        -
+            username: account1
+            password: password1
+
+zimuzu:
+    accounts:
+        -
+            username: account1
+            password: password1

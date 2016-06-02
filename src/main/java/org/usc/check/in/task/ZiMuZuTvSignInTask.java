@@ -13,6 +13,7 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.usc.check.in.model.Account;
@@ -25,6 +26,7 @@ import com.alibaba.fastjson.JSONObject;
  * @author Shunli
  */
 @Component
+@ConfigurationProperties(prefix = "zimuzu")
 public class ZiMuZuTvSignInTask extends BaseTask {
     private static final Logger log = LoggerFactory.getLogger(ZiMuZuTvSignInTask.class);
 
@@ -32,14 +34,9 @@ public class ZiMuZuTvSignInTask extends BaseTask {
     private static final String LOGIN_URL = "http://www.zimuzu.tv/User/Login/ajaxLogin";
     private static final String SIGN_IN_URL = "http://www.zimuzu.tv/user/sign";
 
-    @Override
-    protected String name() {
-        return "zimuzu";
-    }
-
     @Scheduled(cron = "0 0 7,18 * * ?")
     public void run() {
-        for (Account account : buildAccounts()) {
+        for (Account account : getAccounts()) {
             try {
                 Executor executor = Executor.newInstance().use(new BasicCookieStore());
                 if (login(executor, account)) {
