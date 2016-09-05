@@ -35,8 +35,8 @@ import org.usc.check.in.model.Account;
 public class V2exCheckInTask extends BaseTask {
     private static final Logger log = LoggerFactory.getLogger(V2exCheckInTask.class);
 
-    private static final String LOGIN_URL = "http://www.v2ex.com/signin";
-    private static final String CHECK_IN_URL = "http://www.v2ex.com/mission/daily";
+    private static final String LOGIN_URL = "https://www.v2ex.com/signin";
+    private static final String CHECK_IN_URL = "https://www.v2ex.com/mission/daily";
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36";
 
     @Scheduled(cron = "0 0 9,18 * * ?")
