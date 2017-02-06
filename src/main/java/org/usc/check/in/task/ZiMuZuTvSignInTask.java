@@ -1,9 +1,7 @@
 package org.usc.check.in.task;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -18,11 +16,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.usc.check.in.model.Account;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
  * @author Shunli
  */
 @Component
@@ -30,8 +28,8 @@ import com.alibaba.fastjson.JSONObject;
 public class ZiMuZuTvSignInTask extends BaseTask {
     private static final Logger log = LoggerFactory.getLogger(ZiMuZuTvSignInTask.class);
 
-    private static final String URL = "http://www.zimuzu.tv/";
-    private static final String LOGIN_URL = "http://www.zimuzu.tv/User/Login/ajaxLogin";
+    private static final String URL = "http://www.zmz2017.com/";
+    private static final String LOGIN_URL = "http://www.zmz2017.com/User/Login/ajaxLogin";
     private static final String SIGN_IN_URL = "http://www.zimuzu.tv/user/sign";
 
     @Scheduled(cron = "0 0 7,18 * * ?")
@@ -39,9 +37,10 @@ public class ZiMuZuTvSignInTask extends BaseTask {
         for (Account account : getAccounts()) {
             try {
                 Executor executor = Executor.newInstance().use(new BasicCookieStore());
-                if (login(executor, account)) {
-                    signIn(executor, account);
-                }
+                login(executor, account);
+                // if (login(executor, account)) {
+                //     signIn(executor, account);
+                // }
             } catch (Exception e) {
                 log.error("【ZIMUZU】【" + account.getUsername() + "】签到异常", e);
             }
