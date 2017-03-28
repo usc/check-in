@@ -2,7 +2,6 @@ package org.usc.check.in.task;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Executor;
@@ -30,7 +29,7 @@ public class ZiMuZuTvSignInTask extends BaseTask {
 
     private static final String URL = "http://www.zmz2017.com/";
     private static final String LOGIN_URL = "http://www.zmz2017.com/User/Login/ajaxLogin";
-    private static final String SIGN_IN_URL = "http://www.zimuzu.tv/user/sign";
+    private static final String SIGN_IN_URL = "http://www.zmz2017.com/user/login";
 
     @Scheduled(cron = "0 0 7,18 * * ?")
     public void run() {
@@ -38,9 +37,9 @@ public class ZiMuZuTvSignInTask extends BaseTask {
             try {
                 Executor executor = Executor.newInstance().use(new BasicCookieStore());
                 login(executor, account);
-                // if (login(executor, account)) {
-                //     signIn(executor, account);
-                // }
+                if (login(executor, account)) {
+                    signIn(executor, account);
+                }
             } catch (Exception e) {
                 log.error("【ZIMUZU】【" + account.getUsername() + "】签到异常", e);
             }
@@ -72,19 +71,19 @@ public class ZiMuZuTvSignInTask extends BaseTask {
     }
 
     private boolean signIn(Executor executor, Account account) throws ClientProtocolException, IOException, InterruptedException {
-        String usrename = account.getUsername();
+        // String usrename = account.getUsername();
 
         executor.execute(appendTimeOuts(Request.Get(URL))).discardContent();
         executor.execute(appendTimeOuts(Request.Get("http://www.zimuzu.tv/public/hotkeyword"))).discardContent();
         executor.execute(appendTimeOuts(Request.Get("http://www.zimuzu.tv/user/login/getCurUserTopInfo"))).discardContent();
 
-        String rtn = executor.execute(appendTimeOuts(Request.Get(SIGN_IN_URL))).returnContent().asString();
-        if (StringUtils.contains(rtn, "您今天已登录")) {
-            log.info("【ZIMUZU】【{}】签到成功", usrename);
-            return true;
-        }
-
-        log.info("【ZIMUZU】【{}】签到失败", usrename);
+        // String rtn = executor.execute(appendTimeOuts(Request.Get(SIGN_IN_URL))).returnContent().asString();
+        // if (StringUtils.contains(rtn, "您今天已登录")) {
+        //     log.info("【ZIMUZU】【{}】签到成功", usrename);
+        //     return true;
+        // }
+        //
+        // log.info("【ZIMUZU】【{}】签到失败", usrename);
         return false;
     }
 
