@@ -11,7 +11,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.usc.check.in.model.Account;
 
@@ -31,7 +30,7 @@ public class ZiMuZuTvSignInTask extends BaseTask {
     private static final String LOGIN_URL = "http://www.zmz2017.com/User/Login/ajaxLogin";
     private static final String SIGN_IN_URL = "http://www.zmz2017.com/user/login";
 
-    @Scheduled(cron = "0 0 7,18 * * ?")
+    // @Scheduled(cron = "0 0 7,18 * * ?")
     public void run() {
         for (Account account : getAccounts()) {
             try {
