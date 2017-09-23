@@ -27,5 +27,8 @@ hs_err_pid*
 # Maven
 target/
 
+# Log
+*.log
+
 # Private
 /src/main/resources/application-production.yml
