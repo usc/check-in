@@ -1,11 +1,7 @@
 package org.usc.check.in.task;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -26,11 +22,13 @@ import org.springframework.stereotype.Component;
 import org.usc.check.in.model.Account;
 import org.usc.check.in.util.DesUtil;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
  * @author Shunli
  */
 @Component
@@ -44,8 +42,8 @@ public class SmzdmAndroidTask extends BaseTask {
     private static final String LOTTERY_CHECK_IN_URL = "https://h5.smzdm.com/user/lottery/checkin";
     private static final String LOTTERY_URL = "https://h5.smzdm.com/user/lottery/ajax_draw";
 
-    private static final String SSID = "D8abqe1FRAD2q037uVrvioeMW1Wbc4FV";
-    private static final String USER_AGENT = "smzdm_android_V6.2 rv:310 (MI 4LTE;Android6.0.1;zh)";
+    private static final String SSID = "1fpZWlsWTfS1sVVtQLM2jXGJmRR7Ie72";
+    private static final String USER_AGENT = "smzdm_android_V8.2 rv:400 (Nexus 6P;Android8.0.0;zh)smzdmapp";
 
     @Scheduled(cron = "0 0 5,18 * * ?")
     public void run() {
@@ -54,8 +52,8 @@ public class SmzdmAndroidTask extends BaseTask {
                 CloseableHttpClient client = HttpClients.custom().setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE).build();
                 Executor executor = Executor.newInstance(client).use(new BasicCookieStore());
                 String token = login(executor, account);
-                if (StringUtils.isNotEmpty(token)) {
-                    if (checkIn(executor, account, token)) {
+                if(StringUtils.isNotEmpty(token)) {
+                    if(checkIn(executor, account, token)) {
                         lottery(executor, account, token);
                     }
                 }
@@ -91,7 +89,7 @@ public class SmzdmAndroidTask extends BaseTask {
         // 1st get user info
         Request userInfoRequest = appendTimeOuts(Request.Post(USER_INFO_URL)).bodyForm(buildFormParams(token)).userAgent(USER_AGENT);
         JSONObject userInfoParseObject = JSON.parseObject(executor.execute(userInfoRequest).returnContent().asString());
-        if (!parseResult("获取信息", usrename, userInfoParseObject)) {
+        if(!parseResult("获取信息", usrename, userInfoParseObject)) {
             return false;
         }
 
@@ -100,14 +98,15 @@ public class SmzdmAndroidTask extends BaseTask {
         String key = userInfoDataJsonObject.getString("en_key");
         String userId = userInfoDataJsonObject.getString("user_smzdm_id");
 
-        URI lottreyCheckInURI = new URIBuilder(LOTTERY_CHECK_IN_URL).
-                addParameter("d", DesUtil.encrypt(userId + SSID + "_" + serverTime, key)).
-                addParameter("t", DigestUtils.md5Hex(token)).
-                addParameter("f", "android").
-                addParameter("s", SSID).
-                addParameter("add_point", "").
-                addParameter("displaymode", "0").
-                build();
+        URI lottreyCheckInURI = new URIBuilder(LOTTERY_CHECK_IN_URL)
+                .addParameter("d", DesUtil.encrypt(userId + SSID + "_" + serverTime, key))
+                .addParameter("t", DigestUtils.md5Hex(token))
+                .addParameter("f", "android")
+                .addParameter("s", SSID)
+                .addParameter("add_point", "0")
+                .addParameter("displaymode", "0")
+                .addParameter("v", "8.2")
+                .build();
 
         // 2nd check in lottery status and set cookie
         executor.execute(appendTimeOuts(Request.Get(lottreyCheckInURI)).userAgent(USER_AGENT)).discardContent();
@@ -127,13 +126,13 @@ public class SmzdmAndroidTask extends BaseTask {
         formParams.add(new BasicNameValuePair("token", token));
         // formParams.add(new BasicNameValuePair("partner_id", "3"));
         formParams.add(new BasicNameValuePair("weixin", "1"));
-        formParams.add(new BasicNameValuePair("v", "310"));
+        formParams.add(new BasicNameValuePair("v", "8.2"));
         formParams.add(new BasicNameValuePair("", ""));
         return formParams;
     }
 
     private boolean parseResult(String action, String usrename, JSONObject jsonObject) {
-        if (0 != jsonObject.getInteger("error_code")) {
+        if(0 != jsonObject.getInteger("error_code")) {
             log.info("【SMZDM】【{}】{}失败：{}", usrename, action, jsonObject.getString("error_msg"));
             return false;
         }
