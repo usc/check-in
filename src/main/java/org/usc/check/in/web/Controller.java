@@ -43,7 +43,7 @@ public class Controller {
     public String all() {
         smzdmAndroidTask.run();
         v2exCheckInTask.run();
-        ziMuZuTvSignInTask.run();
+        // ziMuZuTvSignInTask.run();
 
         return "success";
     }
