@@ -1,10 +1,5 @@
 package org.usc.check.in.task;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -26,8 +21,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.usc.check.in.model.Account;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author Shunli
  */
 @Component
@@ -46,7 +45,7 @@ public class V2exCheckInTask extends BaseTask {
                 RequestConfig config = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD_STRICT).build();
                 CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(config).build();
                 Executor executor = Executor.newInstance(client).use(new BasicCookieStore());
-                if (login(executor, account)) {
+                if(login(executor, account)) {
                     checkIn(executor, account);
                 }
             } catch (Exception e) {
@@ -75,7 +74,7 @@ public class V2exCheckInTask extends BaseTask {
 
         // checkIn must load first page once
         String rtn = executor.execute(appendTimeOuts(Request.Get("http://www.v2ex.com"))).returnContent().asString();
-        if (StringUtils.contains(rtn, "signout")) {
+        if(StringUtils.contains(rtn, "signout")) {
             log.info("【V2EX】【{}】登录成功", usrename);
             return true;
         }
@@ -88,14 +87,14 @@ public class V2exCheckInTask extends BaseTask {
         String usrename = account.getUsername();
 
         String rtn = executor.execute(appendTimeOuts(Request.Get(CHECK_IN_URL))).returnContent().asString();
-        if (StringUtils.contains(rtn, "fa-ok-sign")) {
+        if(StringUtils.contains(rtn, "fa-ok-sign")) {
             log.info("【V2EX】【{}】每日登录奖励已领取，当前账户余额：{}", usrename, getBalance(rtn));
             return true;
         }
 
         Elements element = Jsoup.parse(rtn).getElementsByAttributeValueMatching("onclick", "/mission/daily/redeem");
         String once = StringUtils.substringBetween(element.attr("onclick"), "'", "'");
-        if (StringUtils.isNotEmpty(once)) {
+        if(StringUtils.isNotEmpty(once)) {
             String url = "http://www.v2ex.com" + once;
 
             String checkInRtn = executor.execute(appendTimeOuts(Request.Get(url)).userAgent(USER_AGENT).addHeader("Referer", CHECK_IN_URL)).returnContent().asString();

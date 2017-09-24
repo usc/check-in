@@ -1,14 +1,13 @@
 package org.usc.check.in.task;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.http.client.fluent.Request;
 import org.springframework.beans.factory.annotation.Value;
 import org.usc.check.in.model.Account;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author Shunli
  */
 public abstract class BaseTask {

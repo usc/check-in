@@ -36,7 +36,7 @@ public class ZiMuZuTvSignInTask extends BaseTask {
             try {
                 Executor executor = Executor.newInstance().use(new BasicCookieStore());
                 login(executor, account);
-                if (login(executor, account)) {
+                if(login(executor, account)) {
                     signIn(executor, account);
                 }
             } catch (Exception e) {
@@ -60,7 +60,7 @@ public class ZiMuZuTvSignInTask extends BaseTask {
 
         String loginJson = executor.execute(appendTimeOuts(Request.Post(LOGIN_URL)).bodyForm(formParams)).returnContent().asString();
         JSONObject loginJsonParseObject = JSON.parseObject(loginJson);
-        if (1 != loginJsonParseObject.getInteger("status")) {
+        if(1 != loginJsonParseObject.getInteger("status")) {
             log.info("【ZIMUZU】【{}】登录失败：{}", usrename, loginJsonParseObject.getString("info"));
             return false;
         }

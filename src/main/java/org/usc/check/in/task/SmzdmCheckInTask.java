@@ -1,11 +1,7 @@
 package org.usc.check.in.task;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Executor;
@@ -22,11 +18,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.usc.check.in.model.Account;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
  * @author Shunli
  */
 @Component
@@ -43,7 +41,7 @@ public class SmzdmCheckInTask extends BaseTask {
             try {
                 CloseableHttpClient client = HttpClients.custom().setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE).build();
                 Executor executor = Executor.newInstance(client).use(new BasicCookieStore());
-                if (login(executor, account)) {
+                if(login(executor, account)) {
                     checkIn(executor, account);
                 }
             } catch (Exception e) {
@@ -65,7 +63,7 @@ public class SmzdmCheckInTask extends BaseTask {
 
         String loginJson = executor.execute(appendTimeOuts(Request.Post(LOGIN_URL)).bodyForm(formParams)).returnContent().asString();
         JSONObject loginJsonParseObject = JSON.parseObject(loginJson);
-        if (0 != loginJsonParseObject.getInteger("error_code")) {
+        if(0 != loginJsonParseObject.getInteger("error_code")) {
             log.info("【SMZDM】【{}】登录失败：{}", usrename, loginJsonParseObject.getString("error_msg"));
             return false;
         }
@@ -83,7 +81,7 @@ public class SmzdmCheckInTask extends BaseTask {
 
         String signInJson = executor.execute(appendTimeOuts(Request.Get(checkInURI))).returnContent().asString();
         JSONObject signInParseObject = JSON.parseObject(signInJson);
-        if (0 != signInParseObject.getInteger("error_code")) {
+        if(0 != signInParseObject.getInteger("error_code")) {
             log.info("【SMZDM】【{}】签到失败：{}", usrename, signInParseObject.getString("error_msg"));
             return false;
         }

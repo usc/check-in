@@ -1,13 +1,12 @@
 package org.usc.check.in.util;
 
-import java.io.IOException;
-import java.security.SecureRandom;
-import java.util.Base64;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
+import java.io.IOException;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 /**
  * from http://www.oschina.net/code/snippet_727646_18383
@@ -21,8 +20,7 @@ public class DesUtil {
      * Description 根据键值进行加密
      *
      * @param data
-     * @param key
-     *            加密键byte数组
+     * @param key  加密键byte数组
      * @return
      * @throws Exception
      */
@@ -36,15 +34,14 @@ public class DesUtil {
      * Description 根据键值进行解密
      *
      * @param data
-     * @param key
-     *            加密键byte数组
+     * @param key  加密键byte数组
      * @return
      * @throws IOException
      * @throws Exception
      */
     public static String decrypt(String data, String key) throws IOException,
             Exception {
-        if (data == null)
+        if(data == null)
             return null;
         byte[] buf = Base64.getDecoder().decode(data);
         byte[] bt = decrypt(buf, key.getBytes());
@@ -55,8 +52,7 @@ public class DesUtil {
      * Description 根据键值进行加密
      *
      * @param data
-     * @param key
-     *            加密键byte数组
+     * @param key  加密键byte数组
      * @return
      * @throws Exception
      */
@@ -84,8 +80,7 @@ public class DesUtil {
      * Description 根据键值进行解密
      *
      * @param data
-     * @param key
-     *            加密键byte数组
+     * @param key  加密键byte数组
      * @return
      * @throws Exception
      */

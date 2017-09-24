@@ -42,8 +42,8 @@ public class SmzdmAndroidTask extends BaseTask {
     private static final String LOTTERY_CHECK_IN_URL = "https://h5.smzdm.com/user/lottery/checkin";
     private static final String LOTTERY_URL = "https://h5.smzdm.com/user/lottery/ajax_draw";
 
-    private static final String SSID = "1fpZWlsWTfS1sVVtQLM2jXGJmRR7Ie72";
-    private static final String USER_AGENT = "smzdm_android_V8.2 rv:400 (Nexus 6P;Android8.0.0;zh)smzdmapp";
+    private static final String SSID = "D8abqe1FRAD2q037uVrvioeMW1Wbc4FV";
+    private static final String USER_AGENT = "smzdm_android_V6.2 rv:310 (MI 4LTE;Android6.0.1;zh)";
 
     @Scheduled(cron = "0 0 5,18 * * ?")
     public void run() {
@@ -54,7 +54,7 @@ public class SmzdmAndroidTask extends BaseTask {
                 String token = login(executor, account);
                 if(StringUtils.isNotEmpty(token)) {
                     if(checkIn(executor, account, token)) {
-                        lottery(executor, account, token);
+                        // lottery(executor, account, token);
                     }
                 }
             } catch (Exception e) {
@@ -98,15 +98,14 @@ public class SmzdmAndroidTask extends BaseTask {
         String key = userInfoDataJsonObject.getString("en_key");
         String userId = userInfoDataJsonObject.getString("user_smzdm_id");
 
-        URI lottreyCheckInURI = new URIBuilder(LOTTERY_CHECK_IN_URL)
-                .addParameter("d", DesUtil.encrypt(userId + SSID + "_" + serverTime, key))
-                .addParameter("t", DigestUtils.md5Hex(token))
-                .addParameter("f", "android")
-                .addParameter("s", SSID)
-                .addParameter("add_point", "0")
-                .addParameter("displaymode", "0")
-                .addParameter("v", "8.2")
-                .build();
+        URI lottreyCheckInURI = new URIBuilder(LOTTERY_CHECK_IN_URL).
+                addParameter("d", DesUtil.encrypt(userId + SSID + "_" + serverTime, key)).
+                addParameter("t", DigestUtils.md5Hex(token)).
+                addParameter("f", "android").
+                addParameter("s", SSID).
+                addParameter("add_point", "").
+                addParameter("displaymode", "0").
+                build();
 
         // 2nd check in lottery status and set cookie
         executor.execute(appendTimeOuts(Request.Get(lottreyCheckInURI)).userAgent(USER_AGENT)).discardContent();
@@ -126,7 +125,7 @@ public class SmzdmAndroidTask extends BaseTask {
         formParams.add(new BasicNameValuePair("token", token));
         // formParams.add(new BasicNameValuePair("partner_id", "3"));
         formParams.add(new BasicNameValuePair("weixin", "1"));
-        formParams.add(new BasicNameValuePair("v", "8.2"));
+        formParams.add(new BasicNameValuePair("v", "310"));
         formParams.add(new BasicNameValuePair("", ""));
         return formParams;
     }
