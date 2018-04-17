@@ -13,6 +13,7 @@ smzdm:
             password: password2
 
 v2ex:
+    cookie-path: /tmp
     accounts:
         -
             username: account1

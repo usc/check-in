@@ -19,12 +19,12 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.usc.check.in.model.Account;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -39,6 +39,12 @@ public class V2exCheckInTask extends BaseTask {
     private static final String LOGIN_URL = "https://www.v2ex.com/signin";
     private static final String CHECK_IN_URL = "https://www.v2ex.com/mission/daily";
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36";
+
+    private String cookiePath = "/tmp";
+
+    public void setCookiePath(String cookiePath) {
+        this.cookiePath = cookiePath;
+    }
 
     @Scheduled(cron = "0 0 9,18 * * ?")
     public void run() {
@@ -79,13 +85,13 @@ public class V2exCheckInTask extends BaseTask {
     private boolean login(Executor executor, Account account) throws IOException {
         String userName = account.getUsername();
 
-        Resource resource = new ClassPathResource("v2ex-" + userName + "-cookie.json");
-        if(!resource.exists()) {
+        File file = new File(cookiePath, "v2ex-" + userName + "-cookie.json");
+        if(!file.exists()) {
             log.info("【V2EX】【{}】没有cookie文件", userName);
             return false;
         }
 
-        executor.use(getCookieStore(FileUtils.readFile(resource.getInputStream())));
+        executor.use(getCookieStore(FileUtils.readFile(new FileInputStream(file))));
 
         log.info("【V2EX】【{}】加载cookie文件成功", userName);
         return true;
