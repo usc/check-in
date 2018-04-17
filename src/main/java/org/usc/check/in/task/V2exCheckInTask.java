@@ -92,9 +92,16 @@ public class V2exCheckInTask extends BaseTask {
         }
 
         executor.use(getCookieStore(FileUtils.readFile(new FileInputStream(file))));
-
         log.info("【V2EX】【{}】加载cookie文件成功", userName);
-        return true;
+
+        // checkIn must load first page once
+        String rtn = executor.execute(appendTimeOuts(Request.Get("http://www.v2ex.com"))).returnContent().asString();
+        if(StringUtils.contains(rtn, "signout")) {
+            log.info("【V2EX】【{}】登录成功", userName);
+            return true;
+        }
+
+        return false;
     }
 
     // private boolean login(Executor executor, Account account) throws ClientProtocolException, IOException, URISyntaxException {
