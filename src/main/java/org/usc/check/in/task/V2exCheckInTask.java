@@ -1,7 +1,10 @@
 package org.usc.check.in.task;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import io.undertow.util.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
@@ -10,21 +13,20 @@ import org.apache.http.client.fluent.Request;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.usc.check.in.model.Account;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Shunli
@@ -44,7 +46,7 @@ public class V2exCheckInTask extends BaseTask {
             try {
                 RequestConfig config = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD_STRICT).build();
                 CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(config).build();
-                Executor executor = Executor.newInstance(client).use(new BasicCookieStore());
+                Executor executor = Executor.newInstance(client);
                 if(login(executor, account)) {
                     checkIn(executor, account);
                 }
@@ -55,33 +57,67 @@ public class V2exCheckInTask extends BaseTask {
         }
     }
 
-    private boolean login(Executor executor, Account account) throws ClientProtocolException, IOException, URISyntaxException {
-        String usrename = account.getUsername();
+    private BasicCookieStore getCookieStore(String cookieJson) {
+        JSONArray jsonArray = JSON.parseArray(cookieJson);
 
-        // 1st get once
-        Document checkLoginOnce = Jsoup.parse(executor.execute(appendTimeOuts(Request.Get(LOGIN_URL))).returnContent().asString());
-        String once = checkLoginOnce.getElementsByAttributeValue("name", "once").attr("value");
-        Elements elementsByClass = checkLoginOnce.getElementsByClass("sl");
+        BasicCookieStore cookieStore = new BasicCookieStore();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            String name = jsonObject.getString("name");
+            String value = jsonObject.getString("value");
 
-        List<NameValuePair> formParams = new ArrayList<NameValuePair>();
-        formParams.add(new BasicNameValuePair(elementsByClass.get(0).attr("name"), usrename));
-        formParams.add(new BasicNameValuePair(elementsByClass.get(1).attr("name"), account.getPassword()));
-        formParams.add(new BasicNameValuePair("once", once));
-        formParams.add(new BasicNameValuePair("next", "/"));
+            BasicClientCookie cookie = new BasicClientCookie(name, value);
+            cookie.setDomain(".v2ex.com");
+            cookie.setPath("/");
 
-        // login
-        executor.execute(appendTimeOuts(Request.Post(LOGIN_URL)).bodyForm(formParams).userAgent(USER_AGENT).addHeader("Referer", "http://www/v2ex.com/signin")).discardContent();
-
-        // checkIn must load first page once
-        String rtn = executor.execute(appendTimeOuts(Request.Get("http://www.v2ex.com"))).returnContent().asString();
-        if(StringUtils.contains(rtn, "signout")) {
-            log.info("【V2EX】【{}】登录成功", usrename);
-            return true;
+            cookieStore.addCookie(cookie);
         }
 
-        log.info("【V2EX】【{}】登录失败", usrename);
-        return false;
+        return cookieStore;
     }
+
+    private boolean login(Executor executor, Account account) throws IOException {
+        String userName = account.getUsername();
+
+        Resource resource = new ClassPathResource("v2ex-" + userName + "-cookie.json");
+        if(!resource.exists()) {
+            log.info("【V2EX】【{}】没有cookie文件", userName);
+            return false;
+        }
+
+        executor.use(getCookieStore(FileUtils.readFile(resource.getInputStream())));
+
+        log.info("【V2EX】【{}】加载cookie文件成功", userName);
+        return true;
+    }
+
+    // private boolean login(Executor executor, Account account) throws ClientProtocolException, IOException, URISyntaxException {
+    //     String usrename = account.getUsername();
+    //
+    //     // 1st get once
+    //     Document checkLoginOnce = Jsoup.parse(executor.execute(appendTimeOuts(Request.Get(LOGIN_URL))).returnContent().asString());
+    //     String once = checkLoginOnce.getElementsByAttributeValue("name", "once").attr("value");
+    //     Elements elementsByClass = checkLoginOnce.getElementsByClass("sl");
+    //
+    //     List<NameValuePair> formParams = new ArrayList<NameValuePair>();
+    //     formParams.add(new BasicNameValuePair(elementsByClass.get(0).attr("name"), usrename));
+    //     formParams.add(new BasicNameValuePair(elementsByClass.get(1).attr("name"), account.getPassword()));
+    //     formParams.add(new BasicNameValuePair("once", once));
+    //     formParams.add(new BasicNameValuePair("next", "/"));
+    //
+    //     // login
+    //     executor.execute(appendTimeOuts(Request.Post(LOGIN_URL)).bodyForm(formParams).userAgent(USER_AGENT).addHeader("Referer", "http://www/v2ex.com/signin")).discardContent();
+    //
+    //     // checkIn must load first page once
+    //     String rtn = executor.execute(appendTimeOuts(Request.Get("http://www.v2ex.com"))).returnContent().asString();
+    //     if(StringUtils.contains(rtn, "signout")) {
+    //         log.info("【V2EX】【{}】登录成功", usrename);
+    //         return true;
+    //     }
+    //
+    //     log.info("【V2EX】【{}】登录失败", usrename);
+    //     return false;
+    // }
 
     private boolean checkIn(Executor executor, Account account) throws ClientProtocolException, IOException, URISyntaxException, InterruptedException {
         String usrename = account.getUsername();
